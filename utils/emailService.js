@@ -75,7 +75,38 @@ const sendQuizResultEmail = async (username, score, totalQuestions, language) =>
     }
 };
 
+// Send password reset email
+const sendPasswordResetEmail = async (email, token) => {
+    try {
+        const resetUrl = `http://localhost:3000/reset-password?token=${token}`;
+        await transporter.sendMail({
+            from: process.env.FROM_EMAIL,
+            to: email,
+            subject: 'Password Reset Request for Quiz App',
+            html: `
+               <h1>Password Reset Request</h1>
+
+<p>Hi,</p>
+
+<p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
+
+<p>Please click on the following link, or paste this into your browser to complete the process:</p>
+
+<p><a href="${resetUrl}">${resetUrl}</a></p>
+
+<p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+
+<p>– The Quiz App Team</p>
+            `
+        });
+        console.log('Password reset email sent successfully');
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+    }
+};
+
 module.exports = {
     sendRegistrationEmail,
-    sendQuizResultEmail
+    sendQuizResultEmail,
+    sendPasswordResetEmail
 };
