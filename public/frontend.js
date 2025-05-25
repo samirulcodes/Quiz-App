@@ -41,6 +41,7 @@ if (token) {
 async function handleForgotPassword(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
+    const email = formData.get('forgotEmail'); // Get email from the updated form field
     const newPassword = formData.get('newPassword');
     const confirmPassword = formData.get('confirmPassword');
 
@@ -54,7 +55,7 @@ async function handleForgotPassword(event) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                username: formData.get('username'),
+                username: email, // Send email as username to match backend route
                 newPassword: newPassword,
                 confirmPassword: confirmPassword
             })
@@ -101,7 +102,7 @@ async function handleLogin(event) {
 }
 
 async function handleRegister(event) {
-    event.preventDefault();
+    event.preventDefault(); // Ensure default form submission is prevented
     const formData = new FormData(event.target);
     
     try {
@@ -109,7 +110,7 @@ async function handleRegister(event) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                username: formData.get('username'),
+                email: formData.get('email'), // Only send email
                 password: formData.get('password')
             })
         });
@@ -124,7 +125,7 @@ async function handleRegister(event) {
     } catch (error) {
         alert('Error registering');
     }
-    return false;
+    return false; // Prevent default form submission
 }
 
 function handleLoginSuccess(user) {

@@ -61,7 +61,7 @@
                                 <div class="tab-pane fade" id="register">
                                     <form id="registerForm" onsubmit="return handleRegister(event)">
                                         <div class="mb-3">
-                                            <input type="text" class="form-control" placeholder="Username" name="username" required>
+                                            <input type="email" class="form-control" placeholder="Email" name="email" required>
                                         </div>
                                         <div class="mb-3 position-relative">
                                             <div class="input-group">
@@ -76,24 +76,18 @@
                                 </div>
                                 <div class="tab-pane fade" id="forgotPassword">
                                     <form id="forgotPasswordForm" onsubmit="return handleForgotPassword(event)">
+                                        <h2 class="text-center">Forgot Password</h2>
                                         <div class="mb-3">
-                                            <input type="text" class="form-control" placeholder="Username" name="username" required>
+                                            <label for="forgotEmail" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="forgotEmail" name="forgotEmail" required>
                                         </div>
-                                        <div class="mb-3 position-relative">
-                                            <div class="input-group">
-                                                <input type="password" class="form-control" placeholder="New Password" name="newPassword" required>
-                                                <button type="button" class="btn btn-outline-secondary toggle-password" tabindex="-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </div>
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                                         </div>
-                                        <div class="mb-3 position-relative">
-                                            <div class="input-group">
-                                                <input type="password" class="form-control" placeholder="Confirm New Password" name="confirmPassword" required>
-                                                <button type="button" class="btn btn-outline-secondary toggle-password" tabindex="-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                                         </div>
                                         <button type="submit" class="btn btn-primary w-100">Reset Password</button>
                                     </form>
