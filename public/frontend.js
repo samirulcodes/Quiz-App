@@ -1,4 +1,5 @@
 // Global variables
+const BACKEND_URL = 'https://quiz-app-j251.onrender.com';
 let currentUser = null;
 let currentQuiz = null;
 let currentQuestionIndex = 0;
