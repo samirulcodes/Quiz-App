@@ -251,35 +251,48 @@ function setupCheatDetection() {
     window.addEventListener('blur', handleWindowBlur);
     // Detect if the window gains focus back
     window.addEventListener('focus', handleWindowFocus);
+    // Detect if the document's visibility changes (e.g., tab switched, app minimized)
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 }
 
 function handleWindowBlur() {
-    if (currentQuiz && timer) { // Only track during an active quiz
-        tabSwitchCount++;
-        console.warn(`Tab switch detected. Count: ${tabSwitchCount}`);
-        // Optionally pause the timer or show a warning immediately
-        // clearInterval(timer); // Example: pause timer
+    // This function is primarily for desktop browser tab/window switching.
+    // For mobile or more robust detection, handleVisibilityChange is used.
+    // We can still keep this for broader compatibility, but the main logic
+    // for tab switching detection will be in handleVisibilityChange.
+    // console.warn('Window blur detected.'); // Optional: keep for debugging
+}
 
-        if (tabSwitchCount >= maxTabSwitches) {
-            // Trigger auto-submit or a final warning
-            alert(`You have switched tabs ${maxTabSwitches} times. The quiz will now be submitted.`);
-            submitQuiz();
-        } else {
-            const ordinalSuffix = (count) => {
-                const j = count % 10, k = count % 100;
-                if (j === 1 && k !== 11) return count + "st";
-                if (j === 2 && k !== 12) return count + "nd";
-                if (j === 3 && k !== 13) return count + "rd";
-                return count + "th";
-            };
-            alert(`Warning: Switching tabs is not allowed during the quiz. You have switched tabs ${ordinalSuffix(tabSwitchCount)} time${tabSwitchCount > 1 ? 's' : ''}. You have ${maxTabSwitches - tabSwitchCount} attempt${maxTabSwitches - tabSwitchCount !== 1 ? 's' : ''} left before auto-submission.`);
+function handleVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+        // The tab has become hidden
+        if (currentQuiz && timer) { // Only track during an active quiz
+            tabSwitchCount++;
+            console.warn(`Tab switch detected via visibilitychange. Count: ${tabSwitchCount}`);
+
+            if (tabSwitchCount >= maxTabSwitches) {
+                alert(`You have switched tabs ${maxTabSwitches} times. The quiz will now be submitted.`);
+                submitQuiz();
+            } else {
+                const ordinalSuffix = (count) => {
+                    const j = count % 10, k = count % 100;
+                    if (j === 1 && k !== 11) return count + "st";
+                    if (j === 2 && k !== 12) return count + "nd";
+                    if (j === 3 && k !== 13) return count + "rd";
+                    return count + "th";
+                };
+                alert(`Warning: Switching tabs is not allowed during the quiz. You have switched tabs ${ordinalSuffix(tabSwitchCount)} time${tabSwitchCount > 1 ? 's' : ''}. You have ${maxTabSwitches - tabSwitchCount} attempt${maxTabSwitches - tabSwitchCount !== 1 ? 's' : ''} left before auto-submission.`);
+            }
         }
+    } else {
+        // The tab has become visible
+        handleWindowFocus(); // Call focus handler when tab becomes visible
     }
 }
 
 function handleWindowFocus() {
     if (currentQuiz && timer) { // Only resume if a quiz is active
-        console.log('Window focused.');
+        console.log('Window focused or tab became visible.');
         // Optionally resume the timer if it was paused
         // startTimer(); // Example: resume timer (need to handle remaining time)
     }
@@ -289,6 +302,7 @@ function handleWindowFocus() {
 function removeCheatDetection() {
     window.removeEventListener('blur', handleWindowBlur);
     window.removeEventListener('focus', handleWindowFocus);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
 }
 
 function showQuestion() {
