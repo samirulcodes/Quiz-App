@@ -22,7 +22,7 @@ app.use(express.static('public'));
 app.use('/temp', express.static('temp')); // Serve certificate files
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/quiz_app', {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(async () => {
@@ -54,3 +54,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+

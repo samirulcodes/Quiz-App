@@ -10,6 +10,7 @@ async function seedAdmin() {
             const admin = new User({
                 username: 'admin',
                 password: 'admin123',
+                email: 'admin@example.com', // Add a default email for the admin user
                 role: 'admin'
             });
             

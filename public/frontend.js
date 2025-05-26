@@ -26,7 +26,7 @@ document.querySelectorAll('.toggle-password').forEach(button => {
 // Check if user is already logged in
 const token = localStorage.getItem('token');
 if (token) {
-    fetch('/api/auth/profile', {
+    fetch(`${BACKEND_URL}/api/auth/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -51,7 +51,7 @@ async function handleForgotPassword(event) {
     }
 
     try {
-        const response = await fetch('/api/auth/forgot-password', {
+        const response = await fetch(`${BACKEND_URL}/api/auth/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -79,7 +79,7 @@ async function handleLogin(event) {
     const formData = new FormData(event.target);
     
     try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -106,7 +106,7 @@ async function handleRegister(event) {
     const formData = new FormData(event.target);
     
     try {
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -153,7 +153,7 @@ function logout() {
 async function loadAdminDashboard() {
     // Existing logic to load all results
     try {
-        const response = await fetch('/api/admin/results', {
+        const response = await fetch(`${BACKEND_URL}/api/admin/results`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const users = await response.json();
