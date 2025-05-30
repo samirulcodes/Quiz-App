@@ -399,3 +399,28 @@ body {
     opacity: 0;
     transition: opacity 300ms ease-in;
 }
+
+
+/* Password Requirements Styling */
+.password-requirements {
+    font-size: 0.9rem;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.requirement i {
+    font-size: 1rem;
+}
+
+.requirement.valid i {
+    color: #198754 !important;
+}
+
+.requirement.valid {
+    color: #198754;
+}

@@ -102,17 +102,74 @@ async function handleLogin(event) {
     return false;
 }
 
-async function handleRegister(event) {
-    event.preventDefault(); // Ensure default form submission is prevented
-    const formData = new FormData(event.target);
+// Password validation
+const registerPassword = document.getElementById('registerPassword');
+const registerButton = document.getElementById('registerButton');
+
+registerPassword.addEventListener('input', validatePassword);
+
+function validatePassword() {
+    const password = registerPassword.value;
     
+    // Define validation criteria
+    const validations = {
+        'length-check': password.length >= 8,
+        'uppercase-check': /[A-Z]/.test(password),
+        'lowercase-check': /[a-z]/.test(password),
+        'number-check': /[0-9]/.test(password),
+        'symbol-check': /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+
+    let allValid = true;
+
+    // Update UI for each requirement
+    Object.entries(validations).forEach(([requirement, isValid]) => {
+        const element = document.getElementById(requirement);
+        const icon = element.querySelector('i');
+
+        if (isValid) {
+            element.classList.add('valid');
+            icon.classList.remove('bi-x-circle', 'text-danger');
+            icon.classList.add('bi-check-circle');
+        } else {
+            element.classList.remove('valid');
+            icon.classList.remove('bi-check-circle');
+            icon.classList.add('bi-x-circle', 'text-danger');
+            allValid = false;
+        }
+    });
+
+    // Enable/disable register button
+    registerButton.disabled = !allValid;
+}
+
+// Update handleRegister function
+async function handleRegister(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const password = formData.get('password');
+
+    // Validate password before submitting
+    const validations = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+
+    if (!Object.values(validations).every(Boolean)) {
+        alert('Please ensure your password meets all requirements.');
+        return false;
+    }
+
     try {
         const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: formData.get('email'), // Only send email
-                password: formData.get('password')
+                email: formData.get('email'),
+                password: password
             })
         });
 
@@ -121,12 +178,13 @@ async function handleRegister(event) {
             alert('Registration successful! Please login.');
             document.querySelector('[href="#login"]').click();
         } else {
-            alert(data.message);
+            alert(data.message || 'Registration failed');
         }
     } catch (error) {
-        alert('Error registering');
+        console.error('Registration error:', error);
+        alert('Registration failed. Please try again.');
     }
-    return false; // Prevent default form submission
+    return false;
 }
 
 function handleLoginSuccess(user) {
@@ -704,6 +762,3 @@ async function deleteQuestion(questionId) {
         alert('Error deleting question');
     }
 }
-
-
-
