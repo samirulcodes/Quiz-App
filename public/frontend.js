@@ -466,7 +466,15 @@ function showResults(result) {
                 const quizResultText = `I scored ${result.score} out of ${result.totalQuestions} (${result.percentage.toFixed(1)}%) on the quiz!`;
                 const certificateUrl = result.certificate.filePath;
                 const message = encodeURIComponent(`${quizResultText} Check out my certificate: ${certificateUrl}`);
-                window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${certificateUrl}&title=Quiz%20Result&summary=${message}&source=Programming%20Quiz%20App`, '_blank');
+                
+                // Attempt to open in a new window/tab
+                const newWindow = window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${certificateUrl}&title=Quiz%20Result&summary=${message}&source=Programming%20Quiz%20App`, '_blank');
+                
+                // Check if the new window was blocked or failed to open
+                if (!newWindow || newWindow.closed || typeof newWindow.focus !== 'function') {
+                    // Fallback for mobile or strict pop-up blockers: navigate current window
+                    window.location.href = `https://www.linkedin.com/shareArticle?mini=true&url=${certificateUrl}&title=Quiz%20Result&summary=${message}&source=Programming%20Quiz%20App`;
+                }
             };
         }
     }
