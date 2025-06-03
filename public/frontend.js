@@ -454,29 +454,9 @@ function showResults(result) {
     if (result.certificate && result.certificate.filePath && result.certificate.fileName) {
         const certificateLink = document.createElement('a');
         certificateLink.href = result.certificate.filePath;
-        certificateLink.download = result.certificate.fileName;
         certificateLink.textContent = 'Download Certificate';
         certificateLink.className = 'btn btn-success mt-3'; // Add some styling
         document.getElementById('resultSection').appendChild(certificateLink);
-
-        // Update LinkedIn share button to include certificate URL
-        const shareLinkedInButton = document.getElementById('shareLinkedIn');
-        if (shareLinkedInButton) {
-            shareLinkedInButton.onclick = () => {
-                const quizResultText = `I scored ${result.score} out of ${result.totalQuestions} (${result.percentage.toFixed(1)}%) on the quiz!`;
-                const certificateUrl = result.certificate.filePath;
-                const message = encodeURIComponent(`${quizResultText} Check out my certificate: ${certificateUrl}`);
-                
-                // Attempt to open in a new window/tab
-                const newWindow = window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${certificateUrl}&title=Quiz%20Result&summary=${message}&source=Programming%20Quiz%20App`, '_blank');
-                
-                // Check if the new window was blocked or failed to open
-                if (!newWindow || newWindow.closed || typeof newWindow.focus !== 'function') {
-                    // Fallback for mobile or strict pop-up blockers: navigate current window
-                    window.location.href = `https://www.linkedin.com/shareArticle?mini=true&url=${certificateUrl}&title=Quiz%20Result&summary=${message}&source=Programming%20Quiz%20App`;
-                }
-            };
-        }
     }
 }
 

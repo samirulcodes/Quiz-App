@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 const Quiz = require('../models/Quiz');
 const User = require('../models/User');
@@ -61,16 +63,16 @@ router.post('/submit', authenticateToken, async (req, res) => {
         };
         const { filePath, fileName } = await generateQuizCertificate(certificateData);
 
-        // Award badges based on quiz performance
-        await awardBadges(req.user.userId, score, questions.length, language);
+        const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000'; // Use environment variable or default to localhost
 
         res.json({
             score,
             totalQuestions: questions.length,
             percentage: (score / questions.length) * 100,
             certificate: {
-                filePath: `${process.env.BACKEND_URL}/temp/${fileName}`,
+                filePath: `${backendUrl}/temp/${fileName}`,
                 fileName
+                
             }
         });
     } catch (error) {
@@ -78,48 +80,27 @@ router.post('/submit', authenticateToken, async (req, res) => {
     }
 });
 
-// Function to award badges
-async function awardBadges(userId, score, totalQuestions, language) {
-    try {
-        const user = await User.findById(userId);
-        if (!user) return;
-
-        let newBadges = [];
-
-        // Badge: First Quiz Completed
-        if (user.quizResults.length === 1) { // Check if this is their first quiz result
-            if (!user.badges.includes('First Quiz Completed')) {
-                newBadges.push('First Quiz Completed');
-            }
-        }
-
-        // Badge: Quiz Master (e.g., score 80% or more)
-        const percentage = (score / totalQuestions) * 100;
-        if (percentage >= 80) {
-            const badgeName = `${language} Quiz Master`;
-            if (!user.badges.includes(badgeName)) {
-                newBadges.push(badgeName);
-            }
-        }
-
-        // Badge: Perfect Score
-        if (score === totalQuestions && totalQuestions > 0) {
-            if (!user.badges.includes('Perfect Score')) {
-                newBadges.push('Perfect Score');
-            }
-        }
-
-        if (newBadges.length > 0) {
-            await User.findByIdAndUpdate(userId, { $addToSet: { badges: { $each: newBadges } } });
-            console.log(`User ${user.username} earned new badges: ${newBadges.join(', ')}`);
-        }
-
-    } catch (error) {
-        console.error('Error awarding badges:', error);
-    }
-}
-
 // Get user's quiz history
+router.get('/history', authenticateToken, async (req, res) => {});
+
+// New endpoint to serve certificates
+router.get('/certificate/:fileName', (req, res) => {
+    const fileName = req.params.fileName;
+    const filePath = path.join(__dirname, '..', 'temp', fileName);
+
+    console.log(`Attempting to serve certificate: ${filePath}`);
+    if (fs.existsSync(filePath)) {
+        res.download(filePath, fileName, (err) => {
+            if (err) {
+                console.error('Error downloading certificate:', err);
+                res.status(500).send('Error downloading certificate.');
+            }
+        });
+    } else {
+        res.status(404).send('Certificate not found.');
+    }
+});
+
 router.get('/history', authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId);

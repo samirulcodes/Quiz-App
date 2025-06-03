@@ -68,6 +68,7 @@ const generateQuizCertificate = async (userData) => {
             doc.end();
 
             stream.on('finish', () => {
+                console.log(`Certificate generated and saved to: ${filePath}`);
                 resolve({
                     filePath,
                     fileName

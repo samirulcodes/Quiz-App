@@ -110,17 +110,17 @@ router.get('/profile', authenticateToken, async (req, res) => {
 });
 
 // Get user badges
-router.get('/badges', authenticateToken, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json({ badges: user.badges || [] });
-    } catch (error) {
-        console.error('Error fetching badges:', error);
-        res.status(500).json({ message: 'Error fetching badges', error: error.message });
-    }
-});
+// router.get('/badges', authenticateToken, async (req, res) => {
+//     try {
+//         const user = await User.findById(req.user.userId);
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+//         res.json({ badges: user.badges || [] });
+//     } catch (error) {
+//         console.error('Error fetching badges:', error);
+//         res.status(500).json({ message: 'Error fetching badges', error: error.message });
+//     }
+// });
 
 module.exports = { router, authenticateToken };
