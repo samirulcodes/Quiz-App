@@ -273,7 +273,149 @@
     color: var(--primary);
   }
   
-  /* Admin Dashboard Styles */
+  /* Admin Section Styles */
+
+.container.mt-5 {
+    max-width: 1200px;
+    padding: 0;
+}
+
+.auth-container {
+    display: flex;
+    min-height: 70vh;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin: 2rem auto;
+    background-color: var(--white);
+}
+
+.auth-left {
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    text-align: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-left::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: rotate(30deg);
+    border-radius: 50%;
+}
+
+.auth-left-content {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--white);
+}
+
+.auth-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.auth-left .btn {
+    background: transparent;
+    border: 2px solid var(--white);
+    color: var(--white);
+    padding: 12px 30px;
+    font-size: 1.05rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.auth-left .btn:hover {
+    background: var(--white);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.auth-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+    box-shadow: none;
+    border: none;
+}
+
+.auth-card-body {
+    padding: 0;
+}
+
+.auth-tabs .nav-link {
+    font-weight: 600;
+    color: var(--gray);
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 0;
+    margin-right: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.auth-tabs .nav-link.active {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: transparent;
+}
+
+.auth-tabs .nav-item:last-child .nav-link {
+    margin-right: 0;
+}
+
+.auth-tabs {
+    border-bottom: 1px solid var(--gray-light);
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+@media (max-width: 992px) {
+    .auth-container {
+        flex-direction: column;
+    }
+
+    .auth-left {
+        min-height: 250px;
+        padding: 2rem;
+    }
+
+    .auth-right {
+        padding: 2rem;
+    }
+
+    .auth-title {
+        font-size: 2rem;
+    }
+
+    .auth-subtitle {
+        font-size: 1rem;
+    }
+}
+
   #adminSection .nav-tabs {
     border-bottom: 2px solid rgba(0, 0, 0, 0.05);
   }

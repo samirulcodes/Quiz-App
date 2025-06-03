@@ -99,10 +99,27 @@ router.post('/forgot-password', async (req, res) => {
 // Get user profile
 router.get('/profile', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId).select('-password');
-        res.json(user);
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ username: user.username, email: user.email, role: user.role });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching profile', error: error.message });
+    }
+});
+
+// Get user badges
+router.get('/badges', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ badges: user.badges || [] });
+    } catch (error) {
+        console.error('Error fetching badges:', error);
+        res.status(500).json({ message: 'Error fetching badges', error: error.message });
     }
 });
 

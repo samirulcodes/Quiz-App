@@ -21,8 +21,10 @@
                 </div>
                 <div class="nav-item" id="userSection" style="display: none;">
                     <span class="nav-link" id="username"></span>
+                    <span id="userBadges" class="ms-2"></span>
                     <button class="btn btn-outline-light" onclick="logout()">Logout</button>
                 </div>
+                <div id="badgesContainer" class="mt-3"></div>
             </div>
         </div>
     </nav>
@@ -30,11 +32,18 @@
     <div class="container mt-5">
         <!-- Auth Forms -->
         <div id="authForms">
-            <div class="row justify-content-center">
-                <div class="col-md-6"> <!-- Changed from col-md-10 -->
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="nav nav-tabs" id="authTabs">
+            <div class="auth-container">
+                <div class="auth-left">
+                    <div class="auth-left-content">
+                        <h1 class="auth-title">Welcome Back!</h1>
+                        <p class="auth-subtitle">To keep connected with us please login with your personal info</p>
+                        <button class="btn btn-outline-light" id="showLogin">Sign In</button>
+                    </div>
+                </div>
+                <div class="auth-right">
+                    <div class="card auth-card">
+                        <div class="card-body auth-card-body">
+                            <ul class="nav nav-tabs auth-tabs" id="authTabs">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-bs-toggle="tab" href="#login">Login</a>
                                 </li>
@@ -48,6 +57,7 @@
                             <div class="tab-content mt-3">
                                 <div class="tab-pane fade show active" id="login">
                                     <form id="loginForm" onsubmit="return handleLogin(event)">
+                                        <h2 class="text-center mb-4">Login to Your Account</h2>
                                         <div class="mb-3">
                                             <input type="text" class="form-control" placeholder="Username" name="username" required>
                                         </div>
@@ -64,6 +74,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="register">
                                     <form id="registerForm" onsubmit="return handleRegister(event)">
+                                        <h2 class="text-center mb-4">Create Account</h2>
                                         <div class="mb-3">
                                             <input type="email" class="form-control" placeholder="Email" name="email" required>
                                         </div>
@@ -98,7 +109,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="forgotPassword">
                                     <form id="forgotPasswordForm" onsubmit="return handleForgotPassword(event)">
-                                        <h2 class="text-center">Forgot Password</h2>
+                                        <h2 class="text-center mb-4">Forgot Password</h2>
                                         <div class="mb-3">
                                             <label for="forgotEmail" class="form-label">Email</label>
                                             <input type="email" class="form-control" id="forgotEmail" name="forgotEmail" required>
@@ -117,7 +128,6 @@
                                         If you have forgotten both your username and password, please contact support at <a href="mailto:islamsamirul9798@gmail.com">islamsamirul9798@gmail.com</a>.
                                     </p>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -159,10 +169,16 @@
                             <div id="resultSection" style="display: none;">
                                 <h3 class="text-center mb-4">Quiz Results</h3>
                                 <div id="resultContent" class="text-center">
-                                    <h4>Your Score: <span id="score">0</span>/10</h4>
+                                    <!-- <h4>Your Score: <span id="score">0</span>/10</h4> -->
+                                    <h4>Your Score: <span id="score">0</span>/3</h4>
                                     <p>Percentage: <span id="percentage">0</span>%</p>
                                 </div>
                                 <button class="btn btn-primary w-100 mt-3" onclick="showLanguageSelection()">Take Another Quiz</button>
+                                <div id="social-share" class="mt-3 text-center">
+                                    <p>Share your results:</p>
+                                    <button class="btn btn-info me-2" id="shareTwitter"><i class="bi bi-twitter"></i> Share on Twitter</button>
+                                    <button class="btn btn-primary" id="shareLinkedIn"><i class="bi bi-linkedin"></i> Share on LinkedIn</button>
+                                </div>
                             </div>
                             </div>
                         </div>
