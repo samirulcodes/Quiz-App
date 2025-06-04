@@ -91,9 +91,6 @@ router.post('/submit', authenticateToken, async (req, res) => {
     }
 });
 
-// Get user's quiz history
-router.get('/history', authenticateToken, async (req, res) => {});
-
 // New endpoint to serve certificates
 router.get('/certificate/:fileName', (req, res) => {
     const fileName = req.params.fileName;
@@ -109,15 +106,6 @@ router.get('/certificate/:fileName', (req, res) => {
         });
     } else {
         res.status(404).send('Certificate not found.');
-    }
-});
-
-router.get('/history', authenticateToken, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId);
-        res.json(user.quizResults);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching history', error: error.message });
     }
 });
 
@@ -137,5 +125,7 @@ router.post('/add-question', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Error adding question', error: error.message });
     }
 });
+
+
 
 module.exports = router;

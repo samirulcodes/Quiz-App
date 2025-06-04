@@ -398,6 +398,7 @@ function showQuestion() {
     });
 
     document.getElementById('nextButton').style.display = 'none';
+        document.getElementById('prevButton').style.display = 'none'; // Hide prev button at the start
     
     // Update next button text for last question
     const nextButton = document.getElementById('nextButton');
@@ -406,6 +407,7 @@ function showQuestion() {
     } else {
         nextButton.textContent = 'Next Question';
     }
+    document.getElementById('prevButton').style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
 }
 
 function selectOption(optionIndex) {
@@ -419,14 +421,29 @@ function selectOption(optionIndex) {
     options[optionIndex].classList.add('selected');
 
     document.getElementById('nextButton').style.display = 'block';
-    document.getElementById('nextButton').onclick = () => {
-        if (currentQuestionIndex < currentQuiz.questions.length - 1) {
-            currentQuestionIndex++;
-            showQuestion();
-        } else {
-            submitQuiz();
-        }
-    };
+    document.getElementById('prevButton').style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
+document.getElementById('nextButton').addEventListener('click', handleNextQuestion);
+document.getElementById('prevButton').addEventListener('click', handlePreviousQuestion);
+document.getElementById('prevButton').addEventListener('click', handlePreviousQuestion);
+}
+
+function handlePreviousQuestion() {
+    currentQuestionIndex--;
+    showQuestion();
+}
+
+function handlePreviousQuestion() {
+    currentQuestionIndex--;
+    showQuestion();
+}
+
+function handleNextQuestion() {
+    if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+    } else {
+        submitQuiz();
+    }
 }
 
 async function submitQuiz() {
