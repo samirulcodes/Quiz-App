@@ -37,7 +37,11 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpires: Date,
     badges: [{
         type: String
-    }]
+    }],
+    isBlocked: {
+        type: Boolean,
+        default: false
+    }
 });
 
 // Hash password before saving

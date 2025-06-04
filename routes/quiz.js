@@ -2,15 +2,21 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const Quiz = require('../models/Quiz');
-const User = require('../models/User');
 const { authenticateToken } = require('./auth');
+const User = require('../models/User');
+const Quiz = require('../models/Quiz');
+const { sendBlockedUserAttemptEmail } = require('../utils/emailService');
 const { sendQuizResultEmail } = require('../utils/emailService');
 const { generateQuizCertificate } = require('../utils/certificateService');
 
 // Get random questions for a specific programming language
 router.get('/questions/:language', authenticateToken, async (req, res) => {
     try {
+        const user = await User.findById(req.user.userId);
+        if (user.isBlocked) {
+            sendBlockedUserAttemptEmail(user.username);
+            return res.status(403).json({ message: 'Your account is blocked. You cannot take quizzes.' });
+        }
         const questions = await Quiz.getRandomQuestions(req.params.language);
         res.json(questions);
     } catch (error) {
@@ -21,6 +27,11 @@ router.get('/questions/:language', authenticateToken, async (req, res) => {
 // Submit quiz answers and get results
 router.post('/submit', authenticateToken, async (req, res) => {
     try {
+        const user = await User.findById(req.user.userId);
+        if (user.isBlocked) {
+            sendBlockedUserAttemptEmail(user.username);
+            return res.status(403).json({ message: 'Your account is blocked. You cannot submit quiz results.' });
+        }
         const { answers, language } = req.body;
         const questionIds = Object.keys(answers);
         

@@ -189,6 +189,13 @@ async function handleRegister(event) {
 
 function handleLoginSuccess(user) {
     currentUser = user;
+
+    if (user.isBlocked) {
+        alert('Your account has been blocked due to malicious activity. Please contact support.');
+        handleLogout(); // Log out the user if blocked
+        return;
+    }
+
     document.getElementById('authForms').style.display = 'none';
     document.getElementById('userSection').style.display = 'flex';
     document.getElementById('username').textContent = user.username;
@@ -198,6 +205,7 @@ function handleLoginSuccess(user) {
         loadAdminDashboard();
     } else {
         document.getElementById('quizSection').style.display = 'block';
+        showLanguageSelection();
     }
 }
 
@@ -702,11 +710,20 @@ function displayUserResults(users) {
             ${users.map(user =>
                 user.quizResults.map((result, index) => `
                     <tr>
-                        <td>${user.username}</td>
+                        <td>
+                            ${user.username}
+                            ${user.isBlocked ? 
+                                `<button class="btn btn-sm btn-success ms-2" onclick="unblockUser('${user.username}')">Unblock</button>` : 
+                                `<button class="btn btn-sm btn-warning ms-2" onclick="blockUser('${user.username}')">Block</button>`
+                            }
+                        </td>
                         <td>${result.language}</td>
                         <td>${result.score}/${result.totalQuestions}</td>
                         <td>${new Date(result.date).toLocaleDateString()}</td>
-                        <td>${index === 0 ? `<button class="btn btn-sm btn-primary" onclick="exportUserResultsPDF('${user.username}')">Export PDF</button>` : ''}</td>
+                        <td>
+                            ${index === 0 ? `<button class="btn btn-sm btn-primary me-2" onclick="exportUserResultsPDF('${user.username}')">Export PDF</button>` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="deleteQuizResult('${user.username}', '${result._id}')">Delete Result</button>
+                        </td>
                     </tr>
                 `).join('')
             ).join('')}
@@ -759,5 +776,78 @@ async function deleteQuestion(questionId) {
         }
     } catch (error) {
         alert('Error deleting question');
+    }
+}
+
+async function deleteQuizResult(username, resultId) {
+    if (!confirm(`Are you sure you want to delete this quiz result for ${username}?`)) return;
+
+    console.log(`Attempting to delete quiz result for user: ${username}, result ID: ${resultId}`);
+    try {
+        const response = await fetch(`/api/admin/results/${username}/${resultId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        if (response.ok) {
+            alert('Quiz result deleted successfully.');
+            loadUserResults(); // Reload user results after deletion
+        } else {
+            const errorData = await response.json();
+            alert(`Error deleting quiz result: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error deleting quiz result:', error);
+        alert('An unexpected error occurred while deleting the quiz result.');
+    }
+}
+
+async function blockUser(username) {
+    if (!confirm(`Are you sure you want to block user ${username}?`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/users/${username}/block`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message || `User ${username} blocked successfully.`);
+            loadUserResults(); // Reload the user results table to reflect the change
+        } else {
+            alert(result.message || 'Error blocking user.');
+        }
+    } catch (error) {
+        console.error('Error blocking user:', error);
+        alert('An error occurred while trying to block the user.');
+    }
+}
+
+async function unblockUser(username) {
+    if (!confirm(`Are you sure you want to unblock user ${username}?`)) return;
+
+    try {
+        const response = await fetch(`/api/admin/users/${username}/unblock`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message || `User ${username} unblocked successfully.`);
+            loadUserResults(); // Reload the user results table to reflect the change
+        } else {
+            alert(result.message || 'Error unblocking user.');
+        }
+    } catch (error) {
+        console.error('Error unblocking user:', error);
+        alert('An error occurred while trying to unblock the user.');
     }
 }

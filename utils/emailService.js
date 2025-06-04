@@ -105,8 +105,31 @@ const sendQuizResultEmail = async (username, score, totalQuestions, language) =>
 //     }
 // };
 
+// Send email when a blocked user attempts to take a quiz
+const sendBlockedUserAttemptEmail = async (username) => {
+    try {
+        await transporter.sendMail({
+            from: process.env.FROM_EMAIL,
+            to: username,
+            subject: 'Blocked User Quiz Attempt Notification',
+            html: `
+                <h1>Blocked User Quiz Attempt</h1>
+                <p>Dear ${username},</p>
+                <p>This is to inform you that your account has been blocked from taking quizzes.</p>
+                <p>If you believe this is an error, please contact the administrator.</p>
+                <p>Thank you,</p>
+                <p>– The Quiz App Team</p>
+            `
+        });
+        console.log('Blocked user quiz attempt email sent successfully');
+    } catch (error) {
+        console.error('Error sending blocked user quiz attempt email:', error);
+    }
+};
+
 module.exports = {
     sendRegistrationEmail,
     sendQuizResultEmail,
+    sendBlockedUserAttemptEmail
     // sendPasswordResetEmail
 };

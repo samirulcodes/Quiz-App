@@ -22,7 +22,7 @@ const isAdmin = async (req, res, next) => {
 // Get all users' quiz results
 router.get('/results', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const users = await User.find({}, 'username quizResults');
+        const users = await User.find({}, 'username quizResults isBlocked');
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching results', error: error.message });
@@ -142,7 +142,7 @@ router.get('/results/export/:username', authenticateToken, isAdmin, async (req, 
 // Get quiz statistics
 router.get('/statistics', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const users = await User.find({}, 'username quizResults');
+        const users = await User.find({}, 'username quizResults isBlocked');
         
         // Calculate statistics
         let totalScore = 0;
@@ -183,6 +183,33 @@ router.get('/statistics', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
+// Delete a specific quiz result for a user
+router.delete('/results/:username/:resultId', authenticateToken, isAdmin, async (req, res) => {
+    console.log(`DELETE /api/admin/results/${req.params.username}/${req.params.resultId} received`);
+    try {
+        const { username, resultId } = req.params;
+
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const initialLength = user.quizResults.length;
+        user.quizResults = user.quizResults.filter(result => result._id.toString() !== resultId);
+
+        if (user.quizResults.length === initialLength) {
+            return res.status(404).json({ message: 'Quiz result not found for this user' });
+        }
+
+        await user.save();
+        res.json({ message: 'Quiz result deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting quiz result:', error);
+        res.status(500).json({ message: 'Error deleting quiz result', error: error.message });
+    }
+});
+
 // Add a new question
 router.post('/questions', authenticateToken, isAdmin, async (req, res) => {
     try {
@@ -212,6 +239,62 @@ router.post('/questions', authenticateToken, isAdmin, async (req, res) => {
         res.status(201).json(newQuestion);
     } catch (error) {
         res.status(500).json({ message: 'Error creating question', error: error.message });
+    }
+});
+
+// Get a specific user's quiz results with correct and wrong answers
+router.get('/user-quiz-details/:userId', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId, 'username quizResults');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user quiz details', error: error.message });
+    }
+});
+
+// Block a user
+router.put('/users/:username/block', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.isBlocked = true;
+        await user.save();
+
+        res.json({ message: `User ${username} has been blocked.` });
+    } catch (error) {
+        console.error('Error blocking user:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Unblock a user
+router.put('/users/:username/unblock', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.isBlocked = false;
+        await user.save();
+
+        res.json({ message: `User ${username} has been unblocked.` });
+    } catch (error) {
+        console.error('Error unblocking user:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
