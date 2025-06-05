@@ -679,7 +679,7 @@ async function loadUserResults() {
         const users = await response.json();
 
         const table = document.createElement('table');
-        table.className = 'table table-striped';
+        table.className = 'table table-striped table-responsive';
         table.innerHTML = `
             <thead>
                 <tr>
@@ -693,10 +693,10 @@ async function loadUserResults() {
                 ${users.map(user => 
                     user.quizResults.map(result => `
                         <tr>
-                            <td>${user.username}</td>
-                            <td>${result.language}</td>
-                            <td>${result.score}/${result.totalQuestions}</td>
-                            <td>${new Date(result.date).toLocaleDateString()}</td>
+                            <td data-label="Username">${user.username}</td>
+                            <td data-label="Language">${result.language}</td>
+                            <td data-label="Score">${result.score}/${result.totalQuestions}</td>
+                            <td data-label="Date">${new Date(result.date).toLocaleDateString()}</td>
                         </tr>
                     `).join('')
                 ).join('')}
@@ -712,7 +712,7 @@ async function loadUserResults() {
 
 function displayUserResults(users) {
     const table = document.createElement('table');
-    table.className = 'table table-striped';
+    table.className = 'table table-striped table-responsive';
     table.innerHTML = `
         <thead>
             <tr>

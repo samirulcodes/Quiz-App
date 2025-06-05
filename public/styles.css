@@ -464,6 +464,14 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     background-color: var(--white);
   }
+
+  /* Responsive table for admin user results */
+  .table-responsive-admin {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+
   
   #resultsTable tr:hover td {
     background-color: #f8f9ff;
