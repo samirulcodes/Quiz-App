@@ -5,9 +5,9 @@ const router = express.Router();
 const { authenticateToken } = require('./auth');
 const User = require('../models/User');
 const Quiz = require('../models/Quiz');
-const { sendBlockedUserAttemptEmail } = require('../utils/emailService');
-const { sendQuizResultEmail } = require('../utils/emailService');
+const { sendBlockedUserAttemptEmail, sendQuizResultEmail } = require('../utils/emailService');
 const { generateQuizCertificate } = require('../utils/certificateService');
+const { generateFeedback } = require('../utils/aiService');
 
 // Get random questions for a specific programming language
 router.get('/questions/:language', authenticateToken, async (req, res) => {
@@ -32,18 +32,44 @@ router.post('/submit', authenticateToken, async (req, res) => {
             sendBlockedUserAttemptEmail(user.username);
             return res.status(403).json({ message: 'Your account is blocked. You cannot submit quiz results.' });
         }
+
         const { answers, language } = req.body;
         const questionIds = Object.keys(answers);
-        
-        // Fetch questions to check answers
         const questions = await Quiz.find({ _id: { $in: questionIds } });
-        
+
         let score = 0;
+        let feedbackDetails = {};
+
         questions.forEach(question => {
-            if (answers[question._id] === question.correctAnswer) {
+            const userAnswer = answers[question._id];
+            const isCorrect = userAnswer === question.correctAnswer;
+
+            if (isCorrect) {
                 score++;
+            } else {
+                feedbackDetails[question._id] = {
+                    isCorrect: false,
+                    userAnswer,
+                    correctAnswer: question.correctAnswer,
+                    explanation: question.explanation,
+                    aiFeedback: null
+                };
             }
         });
+
+        // Generate AI feedback for incorrect answers
+        for (const questionId in feedbackDetails) {
+            const detail = feedbackDetails[questionId];
+            const question = questions.find(q => q._id.toString() === questionId);
+            if (question) {
+                detail.aiFeedback = await generateFeedback(
+                    question.question,
+                    question.options[detail.userAnswer],
+                    question.options[detail.correctAnswer],
+                    detail.explanation
+                );
+            }
+        }
 
         // Save result to user's history
         await User.findByIdAndUpdate(req.user.userId, {
@@ -73,8 +99,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
             language
         };
         const { filePath, fileName } = await generateQuizCertificate(certificateData);
-
-        const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000'; // Use environment variable or default to localhost
+        const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
 
         res.json({
             score,
@@ -83,9 +108,10 @@ router.post('/submit', authenticateToken, async (req, res) => {
             certificate: {
                 filePath: `${backendUrl}/temp/${fileName}`,
                 fileName
-                
-            }
+            },
+            feedbackDetails
         });
+
     } catch (error) {
         res.status(500).json({ message: 'Error submitting quiz', error: error.message });
     }
@@ -96,7 +122,7 @@ router.get('/certificate/:fileName', (req, res) => {
     const fileName = req.params.fileName;
     const filePath = path.join(__dirname, '..', 'temp', fileName);
 
-    console.log(`Attempting to serve certificate: ${filePath}`);
+
     if (fs.existsSync(filePath)) {
         res.download(filePath, fileName, (err) => {
             if (err) {
@@ -112,7 +138,6 @@ router.get('/certificate/:fileName', (req, res) => {
 // Admin route to add new questions
 router.post('/add-question', authenticateToken, async (req, res) => {
     try {
-        // Check if user is admin
         const user = await User.findById(req.user.userId);
         if (user.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admin only.' });
@@ -125,7 +150,5 @@ router.post('/add-question', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Error adding question', error: error.message });
     }
 });
-
-
 
 module.exports = router;

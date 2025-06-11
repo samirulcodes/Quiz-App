@@ -473,7 +473,42 @@ function showResults(result) {
     document.getElementById('quizContent').style.display = 'none';
     document.getElementById('resultSection').style.display = 'block';
     document.getElementById('score').textContent = result.score;
+    document.getElementById('totalQuestions').textContent = result.totalQuestions;
     document.getElementById('percentage').textContent = result.percentage.toFixed(1);
+
+
+
+    const feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.innerHTML = ''; // Clear previous feedback
+
+    if (result.feedbackDetails && Object.keys(result.feedbackDetails).length > 0) {
+        const feedbackTitle = document.createElement('h4');
+        feedbackTitle.textContent = 'Detailed Feedback';
+        feedbackContainer.appendChild(feedbackTitle);
+
+        for (const questionId in result.feedbackDetails) {
+            const feedback = result.feedbackDetails[questionId];
+            const question = currentQuiz.questions.find(q => q._id === questionId);
+
+            if (question && feedback.aiFeedback) {
+                const feedbackCard = document.createElement('div');
+                feedbackCard.className = 'card mb-3';
+                feedbackCard.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">Question: ${question.question}</h5>
+                        <p class="card-text text-danger">Your Answer: ${question.options[feedback.userAnswer]}</p>
+                        <p class="card-text text-success">Correct Answer: ${question.options[feedback.correctAnswer]}</p>
+                        <p class="card-text"><strong>Explanation:</strong> ${feedback.aiFeedback.detailedExplanation}</p>
+                        <h6>Suggested Resources:</h6>
+                        <ul>
+                            ${feedback.aiFeedback.suggestedResources.map(res => `<li><a href="${res.url}" target="_blank">${res.name}</a></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                feedbackContainer.appendChild(feedbackCard);
+            }
+        }
+    }
 
     // Add certificate download link if available
     if (result.certificate && result.certificate.filePath && result.certificate.fileName) {
@@ -483,6 +518,9 @@ function showResults(result) {
         certificateLink.className = 'btn btn-success mt-3'; // Add some styling
         document.getElementById('resultSection').appendChild(certificateLink);
     }
+
+    // Append the feedback container to the result section
+    document.getElementById('resultSection').appendChild(feedbackContainer);
 }
 
 function showLanguageSelection() {
