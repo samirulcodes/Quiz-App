@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+        }
+        h1 {
+            font-size: 8em;
+            margin: 0;
+            color: #e74c3c;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: bounceIn 1s ease-out;
+        }
+        h2 {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        a {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        a:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounceIn {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 6em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <h2>Oops! Page Not Found</h2>
+        <p>We can't seem to find the page you're looking for. It might have been moved or deleted.</p>
+        <a href="/">Go to Homepage</a>
+    </div>
+</body>
+</html>
