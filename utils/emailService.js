@@ -20,7 +20,7 @@ const sendRegistrationEmail = async (username) => {
             to: username,
             subject: 'Welcome to Quiz App',
             html: `
-               <h1>🎉 Welcome to Quiz App!</h1>
+               <h1>🎉 Welcome to Quiz App!🎉</h1>
 
 <p>Hi there,</p>
 
@@ -49,7 +49,7 @@ const sendRegistrationEmail = async (username) => {
 };
 
 // Send quiz completion email
-const sendQuizResultEmail = async (username, score, totalQuestions, language) => {
+const sendQuizResultEmail = async (username, score, totalQuestions, language, isCheatSubmission = false) => {
     try {
         const percentage = ((score / totalQuestions) * 100).toFixed(1);
         await transporter.sendMail({
@@ -63,7 +63,7 @@ const sendQuizResultEmail = async (username, score, totalQuestions, language) =>
                     <li>Score: ${score}/${totalQuestions}</li>
                     <li>Percentage: ${percentage}%</li>
                 </ul>
-                <p>Keep practicing to improve your skills!</p>
+                ${isCheatSubmission ? '<p style="color: red; font-weight: bold;">This quiz was auto-submitted due to excessive tab switching (cheat detection).</p>' : '<p>Keep practicing to improve your skills!</p>'}
                 <p>Thank you for using Quiz App!</p>
                 <p>Best regards,</p>
                 <p>– The Quiz App Team</p>

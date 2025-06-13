@@ -338,7 +338,7 @@ function handleVisibilityChange() {
 
             if (tabSwitchCount >= maxTabSwitches) {
                 alert(`You have switched tabs ${maxTabSwitches} times. The quiz will now be submitted.`);
-                submitQuiz();
+                submitQuiz(true);
             } else {
                 const ordinalSuffix = (count) => {
                     const j = count % 10, k = count % 100;
@@ -442,11 +442,11 @@ function handleNextQuestion() {
         currentQuestionIndex++;
         showQuestion();
     } else {
-        submitQuiz();
+        submitQuiz(false);
     }
 }
 
-async function submitQuiz() {
+async function submitQuiz(isCheat = false) {
     try {
         const response = await fetch('/api/quiz/submit', {
             method: 'POST',
@@ -456,7 +456,8 @@ async function submitQuiz() {
             },
             body: JSON.stringify({
                 answers: userAnswers,
-                language: currentQuiz.language
+                language: currentQuiz.language,
+                isCheatSubmission: isCheat
             })
         });
 
@@ -536,7 +537,7 @@ function startTimer() {
         if (timeLeft <= 0) {
             clearInterval(timer);
             removeCheatDetection(); // Remove listeners when time runs out
-            submitQuiz(); // Auto-submit when time runs out
+            submitQuiz(false); // Auto-submit when time runs out
             return;
         }
         

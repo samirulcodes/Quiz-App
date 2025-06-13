@@ -33,7 +33,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
             return res.status(403).json({ message: 'Your account is blocked. You cannot submit quiz results.' });
         }
 
-        const { answers, language } = req.body;
+        const { answers, language, isCheatSubmission } = req.body;
         const questionIds = Object.keys(answers);
         const questions = await Quiz.find({ _id: { $in: questionIds } });
 
@@ -84,12 +84,22 @@ router.post('/submit', authenticateToken, async (req, res) => {
         });
 
         // Send quiz result email
-        await sendQuizResultEmail(
-            req.user.username,
-            score,
-            questions.length,
-            language
-        );
+        if (isCheatSubmission) {
+            await sendQuizResultEmail(
+                req.user.username,
+                score,
+                questions.length,
+                language,
+                true // Indicate cheat submission
+            );
+        } else {
+            await sendQuizResultEmail(
+                req.user.username,
+                score,
+                questions.length,
+                language
+            );
+        }
 
         // Generate certificate
         const certificateData = {
