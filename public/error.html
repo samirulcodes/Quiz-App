@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #f8f8f8;
             color: #333;
             display: flex;
             justify-content: center;
@@ -21,23 +21,30 @@
         .container {
             background-color: #fff;
             border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
             padding: 40px;
             max-width: 600px;
             width: 100%;
             animation: fadeIn 1s ease-out;
         }
-        h1 {
-            font-size: 8em;
-            margin: 0;
-            color: #e74c3c;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            animation: bounceIn 1s ease-out;
+        .error-illustration {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-bottom: 30px;
         }
         h2 {
-            font-size: 2.2em;
-            color: #2c3e50;
-            margin-top: 10px;
+            font-size: 1.5em;
+            color: #555;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-top: 0;
             margin-bottom: 20px;
         }
         p {
@@ -47,47 +54,49 @@
             margin-bottom: 30px;
         }
         a {
-            display: inline-block;
-            background-color: #3498db;
+            display: block;
+            background-color: #e74c3c;
             color: #fff;
             padding: 12px 25px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 30px auto 0 auto; /* Added margin-top and centered horizontally */
         }
         a:hover {
-            background-color: #2980b9;
+            background-color: #c0392b;
             transform: translateY(-3px);
+        }
+        .footer-text {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #aaa;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes bounceIn {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-30px); }
-            60% { transform: translateY(-15px); }
-        }
         @media (max-width: 600px) {
-            h1 {
-                font-size: 6em;
-            }
-            h2 {
-                font-size: 1.8em;
-            }
             .container {
                 padding: 30px;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            h1 {
+                font-size: 2em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>404</h1>
-        <h2>Oops! Page Not Found</h2>
-        <p>We can't seem to find the page you're looking for. It might have been moved or deleted.</p>
-        <a href="/">Go to Homepage</a>
+        <!-- <h2>OOPS ...</h2> -->
+        <img src="./images/error.jpg" alt="Page Eaten Illustration" class="error-illustration">
+        <!-- <h1>THIS PAGE HAS BEEN EATEN</h1> -->
+        <a href="/">GO BACK HOME</a>
+        <!-- <p class="footer-text">designed by <a href="https://www.freepik.com/" target="_blank" style="color: #aaa; text-decoration: underline;">freepik.com</a></p> -->
     </div>
 </body>
 </html>
