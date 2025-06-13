@@ -77,9 +77,22 @@ async function handleForgotPassword(event) {
 
 async function handleLogin(event) {
     event.preventDefault();
+
+    const loginButton = document.getElementById('loginButton');
+    const loginButtonText = document.getElementById('loginButtonText');
+    const loginSpinner = document.getElementById('loginSpinner');
+
+    // Show spinner and disable button
+    loginButton.disabled = true;
+    loginButtonText.style.display = 'none';
+    loginSpinner.style.display = 'inline-block';
+
     const formData = new FormData(event.target);
     
     try {
+        // Simulate a 1-2 second delay
+        await new Promise(resolve => setTimeout(resolve, 1500)); 
+
         const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -98,6 +111,11 @@ async function handleLogin(event) {
         }
     } catch (error) {
         alert('Error logging in');
+    } finally {
+        // Hide spinner and re-enable button
+        loginButton.disabled = false;
+        loginButtonText.style.display = 'inline';
+        loginSpinner.style.display = 'none';
     }
     return false;
 }
@@ -146,6 +164,16 @@ function validatePassword() {
 // Update handleRegister function
 async function handleRegister(event) {
     event.preventDefault();
+
+    const registerButton = document.getElementById('registerButton');
+    const registerButtonText = document.getElementById('registerButtonText');
+    const registerSpinner = document.getElementById('registerSpinner');
+
+    // Show spinner and disable button
+    registerButton.disabled = true;
+    registerButtonText.style.display = 'none';
+    registerSpinner.style.display = 'inline-block';
+
     const formData = new FormData(event.target);
     const password = formData.get('password');
 
@@ -160,10 +188,17 @@ async function handleRegister(event) {
 
     if (!Object.values(validations).every(Boolean)) {
         alert('Please ensure your password meets all requirements.');
+        // Hide spinner and re-enable button immediately if validation fails
+        registerButton.disabled = false;
+        registerButtonText.style.display = 'inline';
+        registerSpinner.style.display = 'none';
         return false;
     }
 
     try {
+        // Simulate a 1-2 second delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
         const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -183,6 +218,11 @@ async function handleRegister(event) {
     } catch (error) {
         console.error('Registration error:', error);
         alert('Registration failed. Please try again.');
+    } finally {
+        // Hide spinner and re-enable button
+        registerButton.disabled = false;
+        registerButtonText.style.display = 'inline';
+        registerSpinner.style.display = 'none';
     }
     return false;
 }
