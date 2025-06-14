@@ -594,9 +594,26 @@ function handleNextQuestion() {
         currentQuestionIndex++;
         showQuestion();
     } else {
-        if (confirm('Are you sure you want to finish the quiz?')) {
-            submitQuiz(false);
-            alert('Quiz submitted successfully!');
+        const totalQuestions = currentQuiz.questions.length;
+        const answeredQuestions = Object.keys(userAnswers).length;
+
+        if (answeredQuestions < totalQuestions) {
+            const unansweredQuestionNumbers = [];
+            for (let i = 0; i < totalQuestions; i++) {
+                const questionId = currentQuiz.questions[i]._id;
+                if (!(questionId in userAnswers)) {
+                    unansweredQuestionNumbers.push(i + 1);
+                }
+            }
+            if (confirm(`You have not answered question(s) ${unansweredQuestionNumbers.join(', ')}. Do you still want to submit the quiz?`)) {
+                if (confirm('Are you sure you want to finish the quiz?')) {
+                    submitQuiz(false);
+                }
+            }
+        } else {
+            if (confirm('Are you sure you want to finish the quiz?')) {
+                submitQuiz(false);
+            }
         }
     }
 }
@@ -618,6 +635,7 @@ async function submitQuiz(isCheat = false) {
 
         const result = await response.json();
         showResults(result);
+        alert('Quiz submitted successfully!');
         removeCheatDetection(); // Remove listeners after quiz submission
     } catch (error) {
         alert('Error submitting quiz');
