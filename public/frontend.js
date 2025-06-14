@@ -32,10 +32,29 @@ if (token) {
     })
     .then(res => res.json())
     .then(user => {
-        if (!user.error) {
-            handleLoginSuccess(user);
-        }
+        setTimeout(() => {
+            if (!user.error) {
+                handleLoginSuccess(user);
+            } else {
+                hideLoadingScreen(); // Hide loading screen if no user is logged in
+            }
+        }, 1500); // Ensure loading screen is visible for at least 1.5 seconds
+    })
+    .catch(error => {
+        console.error('Error checking login status:', error);
+        setTimeout(() => {
+            hideLoadingScreen(); // Hide loading screen on error
+        }, 1500); // Ensure loading screen is visible for at least 1.5 seconds
     });
+} else {
+    setTimeout(() => {
+        hideLoadingScreen(); // Hide loading screen if no token exists
+    }, 2500); // Ensure loading screen is visible for at least 1.5 seconds
+}
+
+function hideLoadingScreen() {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
 }
 
 // Authentication Functions
@@ -275,8 +294,12 @@ function showLockAnimation() {
     }
 }
 
+
 function handleLoginSuccess(user) {
     currentUser = user;
+    setTimeout(() => {
+        hideLoadingScreen(); // Hide loading screen after successful login
+    }, 1500); // Ensure loading screen is visible for at least 1.5 seconds
     document.getElementById('authForms').style.display = 'none';
     document.getElementById('quizSection').style.display = 'block';
     document.getElementById('username').textContent = `Welcome, ${user.username}!`;
@@ -304,6 +327,7 @@ function handleLoginSuccess(user) {
         showLanguageSelection(); // Show language selection for regular users
     }
 }
+
 
 function showLockAnimation() {
     const loginForm = document.getElementById('login');
@@ -392,7 +416,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Quiz Functions
+function showLoadingScreen() {
+    document.getElementById('loadingScreen').style.display = 'flex';
+    document.getElementById('mainContent').style.display = 'none';
+}
+
 async function startQuiz(language) {
+    showLoadingScreen();
     try {
         const response = await fetch(`/api/quiz/questions/${language}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -417,8 +447,14 @@ async function startQuiz(language) {
         startTimer();
         showQuestion();
         setupCheatDetection();
+        setTimeout(() => {
+            hideLoadingScreen();
+        }, 1500);
     } catch (error) {
         alert('Error starting quiz');
+        setTimeout(() => {
+            hideLoadingScreen();
+        }, 1500);
     }
 }
 
