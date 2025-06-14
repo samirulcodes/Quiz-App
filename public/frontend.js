@@ -66,7 +66,11 @@ async function handleForgotPassword(event) {
     const confirmPassword = formData.get('confirmPassword');
 
     if (newPassword !== confirmPassword) {
-        alert('Passwords do not match!');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Passwords do not match!'
+        });
         return false;
     }
 
@@ -83,13 +87,25 @@ async function handleForgotPassword(event) {
 
         const data = await response.json();
         if (response.ok) {
-            alert('Password updated successfully! Please login.');
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Password updated successfully! Please login.'
+            });
             document.querySelector('[href="#login"]').click();
         } else {
-            alert(data.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: data.message
+            });
         }
     } catch (error) {
-        alert('Error resetting password');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error resetting password'
+        });
     }
     return false;
 }
@@ -129,10 +145,18 @@ async function handleLogin(event) {
                 showLockAnimation();
             }, 1000); // Add a 1s delay
         } else {
-            alert(data.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: data.message
+            });
         }
     } catch (error) {
-        alert('Error logging in');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error logging in'
+        });
     } finally {
         // Hide spinner and re-enable button
         loginButton.disabled = false;
@@ -209,7 +233,11 @@ async function handleRegister(event) {
     };
 
     if (!Object.values(validations).every(Boolean)) {
-        alert('Please ensure your password meets all requirements.');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Password Requirements',
+            text: 'Please ensure your password meets all requirements.'
+        });
         // Hide spinner and re-enable button immediately if validation fails
         registerButton.disabled = false;
         registerButtonText.style.display = 'inline';
@@ -232,14 +260,26 @@ async function handleRegister(event) {
 
         const data = await response.json();
         if (response.ok) {
-            alert('Registration successful! Please login.');
+            Swal.fire({
+            icon: 'success',
+            title: 'Registration Successful',
+            text: 'Registration successful! Please login.'
+        });
             document.querySelector('[href="#login"]').click();
         } else {
-            alert(data.message || 'Registration failed');
+            Swal.fire({
+            icon: 'error',
+            title: 'Registration Failed',
+            text: data.message || 'Registration failed'
+        });
         }
     } catch (error) {
         console.error('Registration error:', error);
-        alert('Registration failed. Please try again.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Registration Failed',
+            text: 'Registration failed. Please try again.'
+        });
     } finally {
         // Hide spinner and re-enable button
         registerButton.disabled = false;
@@ -303,6 +343,15 @@ function handleLoginSuccess(user) {
     document.getElementById('authForms').style.display = 'none';
     document.getElementById('quizSection').style.display = 'block';
     document.getElementById('username').textContent = `Welcome, ${user.username}!`;
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        icon: 'success',
+        title: `Welcome back, ${user.username}!`
+    });
     document.getElementById('userSection').style.display = 'block';
 
     // Display badges if any
@@ -371,7 +420,11 @@ async function loadAdminDashboard() {
 async function searchUserResults() {
     const username = document.getElementById('userSearchInput').value;
     if (!username) {
-        alert('Please enter a username to search.');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Search Error',
+            text: 'Please enter a username to search.'
+        });
         return;
     }
 
@@ -430,7 +483,11 @@ async function startQuiz(language) {
         const questions = await response.json();
         
         if (questions.length === 0) {
-            alert('No questions available for this language');
+            Swal.fire({
+            icon: 'info',
+            title: 'No Questions',
+            text: 'No questions available for this language'
+        });
             return;
         }
 
@@ -451,7 +508,11 @@ async function startQuiz(language) {
             hideLoadingScreen();
         }, 1500);
     } catch (error) {
-        alert('Error starting quiz');
+        Swal.fire({
+            icon: 'error',
+            title: 'Quiz Error',
+            text: 'Error starting quiz'
+        });
         setTimeout(() => {
             hideLoadingScreen();
         }, 1500);
@@ -486,7 +547,13 @@ function handleVisibilityChange() {
             console.warn(`Tab switch detected via visibilitychange. Count: ${tabSwitchCount}`);
 
             if (tabSwitchCount >= maxTabSwitches) {
-                alert(`You have switched tabs ${maxTabSwitches} times. The quiz will now be submitted.`);
+                Swal.fire({
+            icon: 'warning',
+            title: 'Tab Switch Limit Reached',
+            text: `You have switched tabs ${maxTabSwitches} times. The quiz will now be submitted.`,
+            showConfirmButton: false,
+            timer: 3000
+        });
                 submitQuiz(true);
             } else {
                 const ordinalSuffix = (count) => {
@@ -496,7 +563,13 @@ function handleVisibilityChange() {
                     if (j === 3 && k !== 13) return count + "rd";
                     return count + "th";
                 };
-                alert(`Warning: Switching tabs is not allowed during the quiz. You have switched tabs ${ordinalSuffix(tabSwitchCount)} time${tabSwitchCount > 1 ? 's' : ''}. You have ${maxTabSwitches - tabSwitchCount} attempt${maxTabSwitches - tabSwitchCount !== 1 ? 's' : ''} left before auto-submission.`);
+                Swal.fire({
+            icon: 'warning',
+            title: 'Tab Switch Warning',
+            text: `Warning: Switching tabs is not allowed during the quiz. You have switched tabs ${ordinalSuffix(tabSwitchCount)} time${tabSwitchCount > 1 ? 's' : ''}. You have ${maxTabSwitches - tabSwitchCount} attempt${maxTabSwitches - tabSwitchCount !== 1 ? 's' : ''} left before auto-submission.`,
+            showConfirmButton: false,
+            timer: 5000
+        });
             }
         }
     } else {
@@ -635,10 +708,18 @@ async function submitQuiz(isCheat = false) {
 
         const result = await response.json();
         showResults(result);
-        alert('Quiz submitted successfully!');
+        Swal.fire({
+            icon: 'success',
+            title: 'Quiz Submitted!',
+            text: 'Quiz submitted successfully!'
+        });
         removeCheatDetection(); // Remove listeners after quiz submission
     } catch (error) {
-        alert('Error submitting quiz');
+        Swal.fire({
+            icon: 'error',
+            title: 'Submission Error',
+            text: 'Error submitting quiz'
+        });
     }
 }
 
@@ -758,7 +839,11 @@ async function exportUserResultsPDF(username) {
         document.body.removeChild(a);
     } catch (error) {
         console.error('Error exporting PDF:', error);
-        alert('Error exporting PDF: ' + error.message);
+        Swal.fire({
+            icon: 'error',
+            title: 'Export Error',
+            text: 'Error exporting PDF: ' + error.message
+        });
     }
 }
 
@@ -787,7 +872,11 @@ async function loadStatistics() {
         `).join('');
     } catch (error) {
         console.error('Error loading statistics:', error);
-        alert('Error loading statistics');
+        Swal.fire({
+            icon: 'error',
+            title: 'Statistics Error',
+            text: 'Error loading statistics'
+        });
     }
 }
 
@@ -872,14 +961,26 @@ async function handleAddQuestion(event) {
 
         const result = await response.json();
         if (response.ok) {
-            alert('Question added successfully!');
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Question added successfully!'
+        });
             event.target.reset();
             loadQuestions(); // Reload questions list
         } else {
-            alert(result.message || 'Error adding question');
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message || 'Error adding question'
+        });
         }
     } catch (error) {
-        alert('Error adding question');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error adding question'
+        });
     }
 }
 
@@ -918,7 +1019,11 @@ async function loadUserResults() {
         document.getElementById('resultsTable').innerHTML = '';
         displayUserResults(users);
     } catch (error) {
-        alert('Error loading user results');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error loading user results'
+        });
     }
 }
 
@@ -985,7 +1090,11 @@ async function loadQuestions() {
             </div>
         `;
     } catch (error) {
-        alert('Error loading questions');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error loading questions'
+        });
     }
 }
 
@@ -1001,10 +1110,18 @@ async function deleteQuestion(questionId) {
         if (response.ok) {
             loadQuestions();
         } else {
-            alert('Error deleting question');
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error deleting question'
+        });
         }
     } catch (error) {
-        alert('Error deleting question');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error deleting question'
+        });
     }
 }
 
@@ -1019,15 +1136,27 @@ async function deleteQuizResult(username, resultId) {
         });
 
         if (response.ok) {
-            alert('Quiz result deleted successfully.');
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Quiz result deleted successfully.'
+        });
             loadUserResults(); // Reload user results after deletion
         } else {
             const errorData = await response.json();
-            alert(`Error deleting quiz result: ${errorData.message || response.statusText}`);
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: `Error deleting quiz result: ${errorData.message || response.statusText}`
+        });
         }
     } catch (error) {
         console.error('Error deleting quiz result:', error);
-        alert('An unexpected error occurred while deleting the quiz result.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An unexpected error occurred while deleting the quiz result.'
+        });
     }
 }
 
@@ -1045,14 +1174,26 @@ async function blockUser(username) {
 
         const result = await response.json();
         if (response.ok) {
-            alert(result.message || `User ${username} blocked successfully.`);
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: result.message || `User ${username} blocked successfully.`
+        });
             loadUserResults(); // Reload the user results table to reflect the change
         } else {
-            alert(result.message || 'Error blocking user.');
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message || 'Error blocking user.'
+        });
         }
     } catch (error) {
         console.error('Error blocking user:', error);
-        alert('An error occurred while trying to block the user.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while trying to block the user.'
+        });
     }
 }
 
@@ -1070,13 +1211,25 @@ async function unblockUser(username) {
 
         const result = await response.json();
         if (response.ok) {
-            alert(result.message || `User ${username} unblocked successfully.`);
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: result.message || `User ${username} unblocked successfully.`
+        });
             loadUserResults(); // Reload the user results table to reflect the change
         } else {
-            alert(result.message || 'Error unblocking user.');
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message || 'Error unblocking user.'
+        });
         }
     } catch (error) {
         console.error('Error unblocking user:', error);
-        alert('An error occurred while trying to unblock the user.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while trying to unblock the user.'
+        });
     }
 }
