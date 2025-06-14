@@ -11,12 +11,16 @@
     "@google/genai": "^1.5.0",
     "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^2.4.3",
+    "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
+    "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.5.0",
     "nodemailer": "^7.0.3",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "pdfkit": "^0.17.1"
   },
   "devDependencies": {
