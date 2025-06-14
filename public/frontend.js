@@ -594,7 +594,10 @@ function handleNextQuestion() {
         currentQuestionIndex++;
         showQuestion();
     } else {
-        submitQuiz(false);
+        if (confirm('Are you sure you want to finish the quiz?')) {
+            submitQuiz(false);
+            alert('Quiz submitted successfully!');
+        }
     }
 }
 
