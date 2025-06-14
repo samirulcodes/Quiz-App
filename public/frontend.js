@@ -105,7 +105,10 @@ async function handleLogin(event) {
         const data = await response.json();
         if (response.ok) {
             localStorage.setItem('token', data.token);
-            handleLoginSuccess(data.user);
+            currentUser = data.user; // Set currentUser here
+            setTimeout(() => {
+                showLockAnimation();
+            }, 1000); // Add a 1s delay
         } else {
             alert(data.message);
         }
@@ -227,26 +230,96 @@ async function handleRegister(event) {
     return false;
 }
 
+function showLockAnimation() {
+    const loginForm = document.getElementById('authForms');
+    const lockAnimation = document.getElementById('lockAnimation');
+    const verifyingText = document.createElement('p');
+    verifyingText.id = 'verifyingText';
+    verifyingText.textContent = 'Verifying...';
+    verifyingText.style.textAlign = 'center';
+    verifyingText.style.marginTop = '20px';
+    verifyingText.style.fontSize = '1.2em';
+    verifyingText.style.color = '#000';
+    verifyingText.style.position = 'absolute';
+    verifyingText.style.top = '50%';
+    verifyingText.style.left = '50%';
+    verifyingText.style.transform = 'translate(-50%, -50%)';
+    verifyingText.style.zIndex = '1001';
+    verifyingText.style.display = 'block'; // Ensure it's visible
+
+    loginForm.style.display = 'none';
+    lockAnimation.style.display = 'block';
+    lockAnimation.parentNode.insertBefore(verifyingText, lockAnimation);
+
+    // Play the animation
+    const lottiePlayer = lockAnimation.querySelector('lottie-player');
+    if (lottiePlayer) {
+        lottiePlayer.play();
+        // Listen for the 'complete' event of the Lottie animation
+        lottiePlayer.addEventListener('complete', () => {
+            // Ensure the animation plays for at least 2 seconds, even if it's shorter
+            setTimeout(() => {
+                lockAnimation.style.display = 'none';
+                verifyingText.remove();
+                handleLoginSuccess(currentUser);
+            }, 2000); // Minimum 2 seconds display for animation and text
+
+        }, { once: true });
+    } else {
+        // Fallback if lottie-player is not found
+        setTimeout(() => {
+            lockAnimation.style.display = 'none';
+            verifyingText.remove();
+            handleLoginSuccess(currentUser);
+        }, 2000); // Fallback delay
+    }
+}
+
 function handleLoginSuccess(user) {
     currentUser = user;
+    document.getElementById('authForms').style.display = 'none';
+    document.getElementById('quizSection').style.display = 'block';
+    document.getElementById('username').textContent = `Welcome, ${user.username}!`;
+    document.getElementById('userSection').style.display = 'block';
 
-    if (user.isBlocked) {
-        alert('Your account has been blocked due to malicious activity. Please contact support.');
-        handleLogout(); // Log out the user if blocked
-        return;
+    // Display badges if any
+    const userBadgesContainer = document.getElementById('userBadges');
+    userBadgesContainer.innerHTML = ''; // Clear previous badges
+    if (user.badges && user.badges.length > 0) {
+        user.badges.forEach(badge => {
+            const badgeSpan = document.createElement('span');
+            badgeSpan.className = 'badge bg-info text-dark me-1';
+            badgeSpan.textContent = badge;
+            userBadgesContainer.appendChild(badgeSpan);
+        });
     }
 
-    document.getElementById('authForms').style.display = 'none';
-    document.getElementById('userSection').style.display = 'flex';
-    document.getElementById('username').textContent = user.username;
-    
+    // Check if the user is an admin and show admin section
     if (user.role === 'admin') {
         document.getElementById('adminSection').style.display = 'block';
-        loadAdminDashboard();
+        document.getElementById('quizSection').style.display = 'none'; // Hide quiz section for admin
+        loadAdminDashboard(); // Load admin dashboard if user is admin
     } else {
-        document.getElementById('quizSection').style.display = 'block';
-        showLanguageSelection();
+        document.getElementById('adminSection').style.display = 'none';
+        showLanguageSelection(); // Show language selection for regular users
     }
+}
+
+function showLockAnimation() {
+    const loginForm = document.getElementById('login');
+    const lockAnimation = document.getElementById('lockAnimation');
+
+    loginForm.style.display = 'none';
+    lockAnimation.style.display = 'block';
+
+    lockAnimation.addEventListener('complete', () => {
+        lockAnimation.style.display = 'none';
+        // Assuming user data is available globally or can be fetched
+        // For now, let's just call handleLoginSuccess with a dummy user
+        handleLoginSuccess(currentUser); 
+    }, { once: true });
+
+    lockAnimation.play();
 }
 
 function logout() {
@@ -437,8 +510,9 @@ function showQuestion() {
         optionsContainer.appendChild(button);
     });
 
-    document.getElementById('nextButton').style.display = 'none';
-        document.getElementById('prevButton').style.display = 'none'; // Hide prev button at the start
+    document.getElementById('nextButton').style.display = 'block'; // Ensure next button is visible
+
+    document.getElementById('prevButton').style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
     
     // Update next button text for last question
     const nextButton = document.getElementById('nextButton');
@@ -447,6 +521,7 @@ function showQuestion() {
     } else {
         nextButton.textContent = 'Next Question';
     }
+
     document.getElementById('prevButton').style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
 }
 
@@ -460,7 +535,8 @@ function selectOption(optionIndex) {
     }
     options[optionIndex].classList.add('selected');
 
-    document.getElementById('nextButton').style.display = 'block';
+
+
     document.getElementById('prevButton').style.display = (currentQuestionIndex > 0) ? 'block' : 'none';
 document.getElementById('nextButton').addEventListener('click', handleNextQuestion);
 document.getElementById('prevButton').addEventListener('click', handlePreviousQuestion);
