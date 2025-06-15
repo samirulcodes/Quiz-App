@@ -73,7 +73,6 @@ html: `
     <h1 style="color: #4CAF50; text-align: center;">📊 Quiz Results</h1>
 
     <p>Hi there,</p>
-
     <p>Thanks for completing the <strong>${language}</strong> quiz! Here’s how you did:</p>
 
     <table style="width: 100%; max-width: 400px; margin: 20px auto; border-collapse: collapse;">
