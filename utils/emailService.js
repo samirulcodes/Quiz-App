@@ -50,9 +50,6 @@ const sendRegistrationEmail = async (username) => {
                 <p style="font-size: 12px; color: #888;">You’re receiving this email because you signed up on our platform. If this wasn't you, please ignore this message.</p>
               </div>
             `
-            
-
-            
         });
         console.log('Registration email sent successfully');
     } catch (error) {
@@ -88,12 +85,12 @@ html: `
 
     ${
       isCheatSubmission 
-        ? '<p style="color: red; font-weight: bold; text-align: center;">⚠️ This quiz was auto-submitted due to excessive tab switching (cheat detection).</p>'
+        ? '<p style="color: red; font-weight: bold; text-align: center;">⚠️ This quiz was auto-submitted due to excessive tab switching.</p>'
         : '<p style="text-align: center;">💪 Great effort! Keep practicing to sharpen your skills.</p>'
     }
 
     <p style="text-align: center;">
-      <a href="https://yourquizapp.com/quizzes" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">Take Another Quiz</a>
+      <a href="https://quiz-app-j251.onrender.com/" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">Take Another Quiz</a>
     </p>
 
     <hr style="margin: 30px 0;" />
@@ -152,15 +149,34 @@ const sendBlockedUserAttemptEmail = async (username) => {
         await transporter.sendMail({
             from: process.env.FROM_EMAIL,
             to: username,
-            subject: 'Blocked User Quiz Attempt Notification',
+            subject: '🚫 Quiz Access Blocked – Action Required',
             html: `
-                <h1>Blocked User Quiz Attempt</h1>
-                <p>Dear ${username},</p>
-                <p>This is to inform you that your account has been blocked from taking quizzes.</p>
-                <p>If you believe this is an error, please contact the administrator.</p>
-                <p>Thank you,</p>
-                <p>– The Quiz App Team</p>
+              <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; border: 1px solid #f2dede; border-radius: 10px; background-color: #fff3f3;">
+                <h1 style="color: #d9534f; text-align: center;">🚫 Access Blocked</h1>
+            
+                <p>Dear <strong>${username}</strong>,</p>
+            
+                <p>We regret to inform you that your account has been <strong>temporarily blocked</strong> from taking quizzes on <strong>Quiz App</strong>.</p>
+            
+                <p><strong>Reason:</strong> This may be due to suspicious behavior, policy violations, or repeated rule infractions.</p>
+            
+                <p>If you believe this action was taken in error or would like to appeal, please contact our administrator or support team.</p>
+            
+                <p style="text-align: center; margin: 20px 0;">
+                  <a href="mailto:islamsamirul9798@gmail.com" style="padding: 10px 20px; background-color: #d9534f; color: white; text-decoration: none; border-radius: 5px;">Contact Support</a>
+                </p>
+            
+                <hr style="margin: 30px 0;" />
+            
+                <p>We appreciate your understanding and cooperation.</p>
+                <p>– The <strong>Quiz App</strong> Team</p>
+            
+                <p style="font-size: 12px; color: #888; text-align: center; margin-top: 30px;">
+                  You're receiving this email because your account activity triggered a block on Quiz App.
+                </p>
+              </div>
             `
+            
         });
         console.log('Blocked user quiz attempt email sent successfully');
     } catch (error) {
