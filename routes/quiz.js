@@ -161,4 +161,70 @@ router.post('/add-question', authenticateToken, async (req, res) => {
     }
 });
 
+// Get leaderboard data
+router.get('/leaderboard', async (req, res) => {
+    try {
+        const users = await User.find({}, 'username quizResults');
+
+        let topPerformers = [];
+
+        users.forEach(user => {
+            if (user.quizResults && user.quizResults.length > 0) {
+                let bestScore = 0;
+                let bestScoreDate = null;
+
+                user.quizResults.forEach(result => {
+                    if (result.score > bestScore) {
+                        bestScore = result.score;
+                        bestScoreDate = result.date;
+                    }
+                });
+
+                topPerformers.push({
+                    username: user.username,
+                    bestScore: bestScore,
+                    date: bestScoreDate
+                });
+            }
+        });
+
+        // Sort top performers by score (descending)
+        topPerformers.sort((a, b) => b.bestScore - a.bestScore);
+
+        // Optionally, limit the number of top performers displayed
+        // For example, to show top 10:
+        // topPerformers = topPerformers.slice(0, 10);
+
+        res.json(topPerformers);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching leaderboard data', error: error.message });
+    }
+});
+
+// Admin route to delete a user's quiz results from the leaderboard
+router.delete('/leaderboard/:username', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId);
+        if (user.role !== 'admin') {
+            return res.status(403).json({ message: 'Access denied. Admin only.' });
+        }
+
+        const { username } = req.params;
+        const targetUser = await User.findOne({ username });
+
+        if (!targetUser) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Clear all quiz results for the target user
+        targetUser.quizResults = [];
+        await targetUser.save();
+
+        res.status(200).json({ message: `All quiz results for ${username} deleted successfully.` });
+    } catch (error) {
+        console.error('Error deleting leaderboard entry:', error);
+        res.status(500).json({ message: 'Error deleting leaderboard entry', error: error.message });
+    }
+});
+
 module.exports = router;

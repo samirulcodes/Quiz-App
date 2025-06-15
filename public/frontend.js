@@ -55,6 +55,23 @@ if (token) {
 function hideLoadingScreen() {
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
+    updateLeaderboardLinkVisibility();
+}
+
+function updateLeaderboardLinkVisibility() {
+    const authForms = document.getElementById('authForms');
+    const quizSection = document.getElementById('quizSection');
+    const leaderboardLink = document.getElementById('leaderboardLink');
+
+    if (leaderboardLink) {
+        if (authForms && authForms.style.display !== 'none') {
+            leaderboardLink.style.display = 'block'; // Show leaderboard link on auth page
+        } else if (quizSection && quizSection.style.display !== 'none') {
+            leaderboardLink.style.display = 'none'; // Hide leaderboard link when quiz section is active
+        } else {
+            leaderboardLink.style.display = 'block'; // Default to show if neither is explicitly active (e.g., initial load)
+        }
+    }
 }
 
 // Authentication Functions
