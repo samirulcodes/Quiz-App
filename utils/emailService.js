@@ -18,29 +18,41 @@ const sendRegistrationEmail = async (username) => {
         await transporter.sendMail({
             from: process.env.FROM_EMAIL,
             to: username,
-            subject: 'Welcome to Quiz App',
+            subject: '🎉 Welcome to Quiz App – Let’s Get Quizzing!',
             html: `
-               <h1>🎉 Welcome to Quiz App!🎉</h1>
-
-<p>Hi there,</p>
-
-<p>Thank you for registering with <strong>Quiz App</strong>! We're excited to have you on board.</p>
-
-<p>With Quiz App, you can:</p>
-<ul>
-  <li>📚 Take quizzes on various topics</li>
-  <li>🧠 Improve your skills with instant feedback</li>
-</ul>
-
-
-
-<p>Need help or have questions? Contact our support team</a> anytime. <strong>islamsamirul9798@gmail.com</strong></p>
-
-<p>Happy learning and good luck on your quiz journey! 🚀</p>
-
-<p>– The Quiz App Team</p>
-
+              <div style="font-family: Arial, sans-serif; color: #333;">
+                <h1 style="color: #4CAF50;">🎉 Welcome to Quiz App! 🎉</h1>
+            
+                <p>Hi <strong>there</strong>,</p>
+            
+                <p>Thank you for registering with <strong>Quiz App</strong>! We're thrilled to have you join our learning community.</p>
+            
+                <p>With <strong>Quiz App</strong>, you can:</p>
+                <ul>
+                  <li>📚 Take quizzes across multiple categories</li>
+                  <li>🧠 Get AI-based instant feedback to improve your skills</li>
+                  <li>🏆 Track your progress and become a top scorer</li>
+                
+                </ul>
+            
+                <p>👉 <a href="https://quiz-app-j251.onrender.com/" style="color: #4CAF50;">Start your first quiz now!</a></p>
+            
+                <hr style="margin: 20px 0;" />
+            
+                <p>Need help or have questions? Reach out to our support team anytime at: 
+                  <a href="mailto:islamsamirul9798@gmail.com">islamsamirul9798@gmail.com</a>
+                </p>
+            
+                <p>Happy learning and good luck on your quiz journey! 🚀</p>
+            
+                <p style="margin-top: 30px;">– The <strong>Quiz App</strong> Team</p>
+            
+                <p style="font-size: 12px; color: #888;">You’re receiving this email because you signed up on our platform. If this wasn't you, please ignore this message.</p>
+              </div>
             `
+            
+
+            
         });
         console.log('Registration email sent successfully');
     } catch (error) {
@@ -55,19 +67,49 @@ const sendQuizResultEmail = async (username, score, totalQuestions, language, is
         await transporter.sendMail({
             from: process.env.FROM_EMAIL,
             to: username,
-            subject: 'Quiz Results',
-            html: `
-                <h1>Quiz Results</h1>
-                <p>Here are your results for the ${language} quiz:</p>
-                <ul>
-                    <li>Score: ${score}/${totalQuestions}</li>
-                    <li>Percentage: ${percentage}%</li>
-                </ul>
-                ${isCheatSubmission ? '<p style="color: red; font-weight: bold;">This quiz was auto-submitted due to excessive tab switching (cheat detection).</p>' : '<p>Keep practicing to improve your skills!</p>'}
-                <p>Thank you for using Quiz App!</p>
-                <p>Best regards,</p>
-                <p>– The Quiz App Team</p>
-            `
+         subject: '🎯 Your Quiz Results Are In!',
+html: `
+  <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; border: 1px solid #eee; border-radius: 10px; background: #f9f9f9;">
+    <h1 style="color: #4CAF50; text-align: center;">📊 Quiz Results</h1>
+
+    <p>Hi there,</p>
+
+    <p>Thanks for completing the <strong>${language}</strong> quiz! Here’s how you did:</p>
+
+    <table style="width: 100%; max-width: 400px; margin: 20px auto; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 10px; font-weight: bold;">✅ Score:</td>
+        <td style="padding: 10px;">${score} / ${totalQuestions}</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; font-weight: bold;">📈 Percentage:</td>
+        <td style="padding: 10px;">${percentage}%</td>
+      </tr>
+    </table>
+
+    ${
+      isCheatSubmission 
+        ? '<p style="color: red; font-weight: bold; text-align: center;">⚠️ This quiz was auto-submitted due to excessive tab switching (cheat detection).</p>'
+        : '<p style="text-align: center;">💪 Great effort! Keep practicing to sharpen your skills.</p>'
+    }
+
+    <p style="text-align: center;">
+      <a href="https://yourquizapp.com/quizzes" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">Take Another Quiz</a>
+    </p>
+
+    <hr style="margin: 30px 0;" />
+
+    <p>If you have any questions or need help, feel free to reach out to us at <a href="mailto:islamsamirul9798@gmail.com">islamsamirul9798@gmail.com</a>.</p>
+
+    <p>Happy learning! 🚀</p>
+    <p>– The <strong>Quiz App</strong> Team</p>
+
+    <p style="font-size: 12px; color: #888; text-align: center; margin-top: 30px;">
+      You're receiving this email because you took a quiz on Quiz App.
+    </p>
+  </div>
+`
+
         });
         console.log('Quiz result email sent successfully');
     } catch (error) {
