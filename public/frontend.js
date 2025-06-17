@@ -1064,16 +1064,16 @@ function displayUserResults(users) {
                         <td>
                             ${user.username}
                             ${user.isBlocked ? 
-                                `<button class="btn btn-sm btn-success ms-2" onclick="unblockUser('${user.username}')">Unblock</button>` : 
-                                `<button class="btn btn-sm btn-warning ms-2" onclick="blockUser('${user.username}')">Block</button>`
+                                `<button class="btn btn-sm btn-success ms-2" onclick="unblockUser('${user.username}')"><i class="bi bi-unlock-fill"></i> Unblock</button>` : 
+                                `<button class="btn btn-sm btn-warning ms-2" onclick="blockUser('${user.username}')"><i class="bi bi-lock-fill"></i> Block</button>`
                             }
                         </td>
                         <td>${result.language}</td>
                         <td>${result.score}/${result.totalQuestions}</td>
                         <td>${new Date(result.date).toLocaleDateString()}</td>
                         <td>
-                            ${index === 0 ? `<button class="btn btn-sm btn-primary me-2" onclick="exportUserResultsPDF('${user.username}')">Export PDF</button>` : ''}
-                            <button class="btn btn-sm btn-danger" onclick="deleteQuizResult('${user.username}', '${result._id}')">Delete Result</button>
+                            ${index === 0 ? `<button class="btn btn-sm btn-primary me-2" onclick="exportUserResultsPDF('${user.username}')"><i class="bi bi-file-earmark-pdf-fill"></i> Export PDF</button>` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="deleteQuizResult('${user.username}', '${result._id}')"><i class="bi bi-trash-fill"></i> Delete Result</button>
                         </td>
                     </tr>
                 `).join('')
